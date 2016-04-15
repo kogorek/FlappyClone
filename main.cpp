@@ -12,6 +12,7 @@
 #include <ctime> //for time(0) and randomness
 
 #include "cbackground.h"
+#include "cfpscounter.h"
 #include "xenfautils.h"
 #include "ccounter.h"
 #include "cflappy.h"
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
     loadTexture(&tex_textures[4], "./res/sprites/fog.png", GL_NEAREST);
     loadTexture(&tex_textures[5], "./res/sprites/homes.png", GL_NEAREST);
     loadTexture(&tex_textures[6], "./res/sprites/sky.png", GL_NEAREST);
-    //sprite backGround(0.0f, 0.0f, texBackGround);
+
     background *backGround[8];
     backGround[0] = new background(0.0f, 0.0f, 1.7f, &tex_textures[3]);
     backGround[1] = new background(1.1f*tex_textures[3].h*1.7f, 0.0f, 1.7f, &tex_textures[3]);
@@ -72,9 +73,10 @@ int main(int argc, char *argv[])
     pipe *greenPipe[3];
     greenPipe[0] = new pipe(500.0f, -500 + rand()%300, 1.7f, &tex_textures[2]); //200
     greenPipe[1] = new pipe(800.0f, -500 + rand()%300, 1.7f, &tex_textures[2]); //500
-//    greenPipe[2] = new pipe(700.0f, -500 + rand()%300, 1.7f, &tex_textures[2]);
 
     flappy* bird = new flappy (-200.0f, 0.0f, 1.0f, &tex_textures[1], greenPipe);
+
+    fpscounter FPS;
 
     counter fontCounter(0.0f, 270.0f, 1.0f);
 
@@ -92,6 +94,10 @@ int main(int argc, char *argv[])
             case SDL_QUIT:
                 b_running = false;
                 break;
+            case SDL_MOUSEBUTTONDOWN: // если произошло событие закрытия окна, то завершаем работу программы
+                if(bird->b_alive)
+                    bird->f_vy = 250.0f;
+                break;
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym)
                 {
@@ -99,6 +105,16 @@ int main(int argc, char *argv[])
                     b_running = false;
                     break;
                 case SDLK_f:
+                    if(n_FPScap == 30)
+                    {
+                        n_FPScap = 60;
+                    }
+                    else
+                    {
+                        n_FPScap = 30;
+                    }
+                    break;
+                case SDLK_g:
                     b_FPScap = !b_FPScap;
                     break;
                 case SDLK_RETURN:
@@ -113,6 +129,7 @@ int main(int argc, char *argv[])
                         bird->n_count = 0;
                         bird->f_vy = 0;
                         bird->pipeNum = 0;
+                        bird->n_deathCount++;
                     }
                     break;
                 }
@@ -124,26 +141,52 @@ int main(int argc, char *argv[])
 
         gluOrtho2D(-n_screenWidth/2, n_screenWidth/2, -n_screenHeight/2, n_screenHeight/2);
 
-        backGround[6]->update(100.0f, f_deltaTime); // Sky
-        backGround[7]->update(100.0f, f_deltaTime);
-
-        backGround[2]->update(100.0f, f_deltaTime); // fog
-        backGround[3]->update(100.0f, f_deltaTime);
-
-        backGround[4]->update(95.0f, f_deltaTime); // homes
-        backGround[5]->update(95.0f, f_deltaTime);
-
-        backGround[0]->update(120.0f, f_deltaTime); // bushes
-        backGround[1]->update(120.0f, f_deltaTime);
-
-        for(int i = 0; i < 2; i ++)
+        if (bird->b_alive)
         {
-            greenPipe[i]->update(190.0f, f_deltaTime);
+
+            backGround[6]->update(100.0f, f_deltaTime); // Sky
+            backGround[7]->update(100.0f, f_deltaTime);
+
+            backGround[2]->update(100.0f, f_deltaTime); // fog
+            backGround[3]->update(100.0f, f_deltaTime);
+
+            backGround[4]->update(95.0f, f_deltaTime); // homes
+            backGround[5]->update(95.0f, f_deltaTime);
+
+            backGround[0]->update(120.0f, f_deltaTime); // bushes
+            backGround[1]->update(120.0f, f_deltaTime);
+
+            for(int i = 0; i < 2; i ++)
+            {
+                greenPipe[i]->update(190.0f, f_deltaTime);
+            }
+        }
+        else
+        {
+
+            backGround[6]->update(0.0f, f_deltaTime); // Sky
+            backGround[7]->update(0.0f, f_deltaTime);
+
+            backGround[2]->update(0.0f, f_deltaTime); // fog
+            backGround[3]->update(0.0f, f_deltaTime);
+
+            backGround[4]->update(0.0f, f_deltaTime); // homes
+            backGround[5]->update(0.0f, f_deltaTime);
+
+            backGround[0]->update(0.0f, f_deltaTime); // bushes
+            backGround[1]->update(0.0f, f_deltaTime);
+
+            for(int i = 0; i < 2; i ++)
+            {
+                greenPipe[i]->update(0.0f, f_deltaTime);
+            }
+
         }
         bird->update(f_deltaTime);
-        //fontCounter.n_count = bird->n_count;
-        //fontCounter.draw();
-        fontCounter.drawScore(bird->n_count, -80.0f, 0.0f, 10.0f, 1.0f);
+        fontCounter.drawScore(bird->n_count, -230.0f, 0.0f, 10.0f);
+        fontCounter.drawScore(bird->n_deathCount, -230.0f, -40.0f, 10.0f);
+        fontCounter.drawScore(FPS.n_FPS, 180.0f, 0.0f, 10.0f);
+        FPS.update();
 
         if(b_FPScap && 1000/n_FPScap > int(SDL_GetTicks()-time))
         {

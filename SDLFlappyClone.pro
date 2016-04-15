@@ -9,7 +9,8 @@ SOURCES += main.cpp \
     cbackground.cpp \
     cflappy.cpp \
     cpipe.cpp \
-    ccounter.cpp
+    ccounter.cpp \
+    cfpscounter.cpp
 
 unix:
 {
@@ -27,4 +28,5 @@ HEADERS += \
     cbackground.h \
     cflappy.h \
     cpipe.h \
-    ccounter.h
+    ccounter.h \
+    cfpscounter.h

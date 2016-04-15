@@ -36,7 +36,7 @@ void counter::drawRect(float f_x1, float f_y1, float f_x2, float f_y2)
     glEnd();
 }
 
-void counter::drawScore(int n_score, float xpos, float ypos, float size, float screenMultiplicator)
+void counter::drawScore(int n_score, float xpos, float ypos, float size)
 {
     char digs[7];
     int digits = 1;
@@ -50,30 +50,12 @@ void counter::drawScore(int n_score, float xpos, float ypos, float size, float s
     }
     sprintf(digs,"%d",n_score);
     glColor3f(1.0f, 1.0f, 1.0f);
+    glPushMatrix();
     glTranslatef(xpos, ypos, 0);
-
-    for (int i = 0; i != 7-digits; i++)
-    {
-        glTranslatef(size+screenMultiplicator, 0, 0);
-        //zero
-        glBegin(GL_LINE_STRIP);
-        glVertex2f(-0.6f*size, 0.7f*size);
-        glVertex2f(-0.4f*size, 1.0f*size);
-        glVertex2f(0.4f*size, 1.0f*size);
-        glVertex2f(0.6f*size, 0.7f*size);
-        glVertex2f(0.6f*size, -0.7f*size);
-        glVertex2f(0.4f*size, -1.0f*size);
-        glVertex2f(-0.4f*size, -1.0f*size);
-        glVertex2f(-0.6f*size, -0.7f*size);
-        glVertex2f(-0.6f*size, 0.7f*size);
-        glEnd();
-//                glTranslatef(-size*i-2, 0, 0);
-//                glTranslatef(-xpos, -ypos, 0);
-    }
     for ( int i = 0; i != digits; i++ )
     {
 
-        glTranslatef(size+screenMultiplicator, 0, 0);
+        glTranslatef(size, 0, 0);
         //zero
         if (digs[i] == '0')
         {
@@ -138,10 +120,5 @@ void counter::drawScore(int n_score, float xpos, float ypos, float size, float s
                      tex_tont[9].w*f_size+f_x, tex_tont[9].h*f_size+f_y);
         }
     }
-    // Goint back to 0.0
-    for (int i = 0; i != 7; i++)
-    {
-        glTranslatef(-size-screenMultiplicator, 0, 0);
-    }
-    glTranslatef(-xpos, -ypos, 0);
+    glPopMatrix();
 }

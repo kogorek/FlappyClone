@@ -18,7 +18,7 @@ public:
     counter(float i_f_x, float i_f_y, float i_f_size);
 
     void drawRect(float f_x1, float f_y1, float f_x2, float f_y2);
-    void drawScore(int n_score, float xpos, float ypos, float size, float screenMultiplicator);
+    void drawScore(int n_score, float xpos, float ypos, float size);
     void draw();
 };
 

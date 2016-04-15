@@ -10,19 +10,17 @@ flappy::flappy(float input_x, float input_y, float f_size, texture *input_tex, p
     pipeList[0] = inputPipe[0];
     pipeList[1] = inputPipe[1];
     pipeNum = 0;
+    n_deathCount = 0;
 }
 
 void flappy::update(float f_deltaTime)
 {
     draw();
     keyboard();
-    //if(b_alive)
 
     f_y += f_vy*f_deltaTime;
-
     f_vy -= 400.0f*f_deltaTime;
     f_angle = f_vy*0.2;
-    //for(int i = 0; i < 3; i++)
     if(pipeList[pipeNum]->f_x <= f_x && b_alive)
     {
         n_count += 1;
@@ -30,25 +28,51 @@ void flappy::update(float f_deltaTime)
     }
     if(pipeNum > 1)
         pipeNum = 0;
-    if(pipeList[pipeNum]->f_x-pipeList[pipeNum]->tex->h/2 < f_x
-            && pipeList[pipeNum]->f_x+pipeList[pipeNum]->tex->h/2 > f_x
-            && (pipeList[pipeNum]->f_y + pipeList[pipeNum]->tex->w*10 > f_y
-                || pipeList[pipeNum]->f_y + pipeList[pipeNum]->tex->w*16 < f_y))
+
+    for(int i = 0; i < 2; i++)
     {
-        b_alive = false;
+        if (pipeList[i]->f_x - pipeList[pipeNum]->tex->w*1.7 < f_x
+                && pipeList[i]->f_x + pipeList[pipeNum]->tex->w*1.7 > f_x
+                && (pipeList[i]->f_y + pipeList[i]->tex->h*1.7 > f_y
+                    || pipeList[i]->f_y + pipeList[i]->tex->h*1.7 + 155 < f_y))
+        {
+            b_alive = false;
+        }
     }
-    // pipeNum += 1;
-    //
-    // std::cout << pipeList[1]->f_x << std::endl;
 }
 
 void flappy::keyboard()
 {
     const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
-    if ( keyboardState[SDL_SCANCODE_SPACE] && b_alive )
+//    SDL_Event event; // события SDL
+
+//    while ( SDL_PollEvent(&event) )
+//    { // начинаем обработку событий
+//        switch(event.type)
+//        { // смотрим:
+//        case SDL_MOUSEBUTTONDOWN: // если произошло событие закрытия окна, то завершаем работу программы
+
+//            break;
+//        }
+//    }
+
+//        case SDL_KEYDOWN: // если нажата клавиша
+//            switch(event.key.keysym.sym)
+//            { // смотрим какая
+//            case SDLK_ESCAPE: // клавиша ESC
+//                running = false; // завершаем работу программы
+//            case SDLK_f:
+//                b_FPScap = !b_FPScap;
+//                break;
+//            }
+//            break;
+//        }
+    //const Uint8 *mouseState = SDL_MouseButtonEvent(NULL);
+    if ( keyboardState[SDL_SCANCODE_SPACE] && b_alive)
     {
         f_vy = 250.0f;
     }
+
 }
 
 void flappy::draw ()

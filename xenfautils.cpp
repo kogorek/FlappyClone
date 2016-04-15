@@ -24,3 +24,13 @@ void loadTexture(texture* inputTexture, const char* pathToTexture, GLint texture
     inputTexture->h = surface->h;
     SDL_FreeSurface(surface);
 }
+
+void xeDDrawCross(float f_x, float f_y, float f_size)
+{
+    glBegin(GL_LINES);
+    glVertex2f(0.0f+f_x, -1.0f*f_size+f_y);
+    glVertex2f(0.0f+f_x, 1.0f*f_size+f_y);
+    glVertex2f(-1.0f*f_size+f_x, 0.0f+f_y);
+    glVertex2f(1.0f*f_size+f_x, 0.0f+f_y);
+    glEnd();
+}

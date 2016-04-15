@@ -17,6 +17,7 @@ public:
     bool b_alive;
     float f_vy;
     int pipeNum;
+    int n_deathCount;
 
     flappy(float input_x, float input_y, float f_size, texture *input_tex, pipe *inputPipe[]);
     void update(float f_deltaTime);

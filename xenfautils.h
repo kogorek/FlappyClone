@@ -10,5 +10,6 @@
 #include "vars.h"
 
 void loadTexture(texture* inputTexture, const char* pathToTexture, GLint textureFiltration);
+void xeDDrawCross(float f_x, float f_y, float f_size);
 
 #endif // XENFAUTILS_H
