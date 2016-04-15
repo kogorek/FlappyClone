@@ -11,7 +11,14 @@ SOURCES += main.cpp \
     cpipe.cpp \
     ccounter.cpp
 
-LIBS += -lGLU -lGL -lSDL2 -lSDL2_image -lSDL2_mixer
+unix:
+{
+    LIBS += -lGLU -lGL -lSDL2 -lSDL2_image -lSDL2_mixer
+}
+win32:
+{
+    LIBS += -lGLU -lGL -lSDL2 -lSDL2_image -lSDL2_mixer
+}
 
 HEADERS += \
     csprite.h \

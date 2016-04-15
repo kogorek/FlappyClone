@@ -24,7 +24,7 @@ void endSDL(background *backGround[], flappy *bird, texture *tex_textures[], pip
 
 SDL_Window *win = NULL;
 
-int n_FPScap = 30;
+int n_FPScap = 60;
 //int n_screenWidth = 640;
 //int n_screenHeight = 480;
 int n_screenWidth = 480;
@@ -69,12 +69,12 @@ int main(int argc, char *argv[])
     backGround[6] = new background(0.0f, 0.0f, 1.7f, &tex_textures[6]);
     backGround[7] = new background(1.1f*tex_textures[6].h*1.7f, 0.0f, 1.7f, &tex_textures[6]);
 
-    flappy* bird = new flappy (-200.0f, 0.0f, 1.0f, &tex_textures[1]);
-
     pipe *greenPipe[3];
-    greenPipe[0] = new pipe(200.0f, -500 + rand()%300, 1.7f, &tex_textures[2]);
-    greenPipe[1] = new pipe(500.0f, -500 + rand()%300, 1.7f, &tex_textures[2]);
-    greenPipe[2] = new pipe(700.0f, -500 + rand()%300, 1.7f, &tex_textures[2]);
+    greenPipe[0] = new pipe(500.0f, -500 + rand()%300, 1.7f, &tex_textures[2]); //200
+    greenPipe[1] = new pipe(800.0f, -500 + rand()%300, 1.7f, &tex_textures[2]); //500
+//    greenPipe[2] = new pipe(700.0f, -500 + rand()%300, 1.7f, &tex_textures[2]);
+
+    flappy* bird = new flappy (-200.0f, 0.0f, 1.0f, &tex_textures[1], greenPipe);
 
     counter fontCounter(0.0f, 270.0f, 1.0f);
 
@@ -101,12 +101,27 @@ int main(int argc, char *argv[])
                 case SDLK_f:
                     b_FPScap = !b_FPScap;
                     break;
+                case SDLK_RETURN:
+                    if(!bird->b_alive)
+                    {
+                        greenPipe[0]->f_x = 200.f;
+                        greenPipe[1]->f_x = 500.f;
+                        greenPipe[0]->f_y = -500 + rand()%300;
+                        greenPipe[1]->f_y = -500 + rand()%300;
+                        bird->b_alive = true;
+                        bird->f_y = 0.0f;
+                        bird->n_count = 0;
+                        bird->f_vy = 0;
+                        bird->pipeNum = 0;
+                    }
+                    break;
                 }
                 break;
             }
         }
         glLoadIdentity();
-        glClear(GL_COLOR_BUFFER_BIT ); //| GL_DEPTH_BUFFER_BIT
+        glClear(GL_COLOR_BUFFER_BIT); //| GL_DEPTH_BUFFER_BIT
+
         gluOrtho2D(-n_screenWidth/2, n_screenWidth/2, -n_screenHeight/2, n_screenHeight/2);
 
         backGround[6]->update(100.0f, f_deltaTime); // Sky
@@ -118,15 +133,17 @@ int main(int argc, char *argv[])
         backGround[4]->update(95.0f, f_deltaTime); // homes
         backGround[5]->update(95.0f, f_deltaTime);
 
-        backGround[0]->update(90.0f, f_deltaTime); // bushes
-        backGround[1]->update(90.0f, f_deltaTime);
-
+        backGround[0]->update(120.0f, f_deltaTime); // bushes
+        backGround[1]->update(120.0f, f_deltaTime);
 
         for(int i = 0; i < 2; i ++)
+        {
             greenPipe[i]->update(190.0f, f_deltaTime);
+        }
         bird->update(f_deltaTime);
-        fontCounter.n_count = bird->n_count;
-        fontCounter.draw();
+        //fontCounter.n_count = bird->n_count;
+        //fontCounter.draw();
+        fontCounter.drawScore(bird->n_count, -80.0f, 0.0f, 10.0f, 1.0f);
 
         if(b_FPScap && 1000/n_FPScap > int(SDL_GetTicks()-time))
         {

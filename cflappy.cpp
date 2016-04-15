@@ -1,28 +1,53 @@
 #include "cflappy.h"
 #include <iostream>
 
-flappy::flappy(float input_x, float input_y, float f_size, texture *input_tex):sprite(input_x, input_y, f_size, input_tex)
+flappy::flappy(float input_x, float input_y, float f_size, texture *input_tex, pipe *inputPipe[]):sprite(input_x, input_y, f_size, input_tex)
 {
+    b_alive = true;
     f_vy = 0;
     f_angle = 0.0f;
     n_count = 0;
+    pipeList[0] = inputPipe[0];
+    pipeList[1] = inputPipe[1];
+    pipeNum = 0;
 }
 
 void flappy::update(float f_deltaTime)
 {
     draw();
     keyboard();
-    f_y += f_vy;
-    f_vy -= 10.0f*f_deltaTime;
-    f_angle = f_vy*5;
+    //if(b_alive)
+
+    f_y += f_vy*f_deltaTime;
+
+    f_vy -= 400.0f*f_deltaTime;
+    f_angle = f_vy*0.2;
+    //for(int i = 0; i < 3; i++)
+    if(pipeList[pipeNum]->f_x <= f_x && b_alive)
+    {
+        n_count += 1;
+        pipeNum += 1;
+    }
+    if(pipeNum > 1)
+        pipeNum = 0;
+    if(pipeList[pipeNum]->f_x-pipeList[pipeNum]->tex->h/2 < f_x
+            && pipeList[pipeNum]->f_x+pipeList[pipeNum]->tex->h/2 > f_x
+            && (pipeList[pipeNum]->f_y + pipeList[pipeNum]->tex->w*10 > f_y
+                || pipeList[pipeNum]->f_y + pipeList[pipeNum]->tex->w*16 < f_y))
+    {
+        b_alive = false;
+    }
+    // pipeNum += 1;
+    //
+    // std::cout << pipeList[1]->f_x << std::endl;
 }
 
 void flappy::keyboard()
 {
     const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
-    if ( keyboardState[SDL_SCANCODE_SPACE] )
+    if ( keyboardState[SDL_SCANCODE_SPACE] && b_alive )
     {
-        f_vy = 8.0f;
+        f_vy = 250.0f;
     }
 }
 
